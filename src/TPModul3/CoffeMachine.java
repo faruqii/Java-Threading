@@ -2,16 +2,16 @@ package TPModul3;
 
 public class CoffeMachine implements Runnable {
 
-    boolean coffeReady = false;
-    static Object lock = new Object();
-    private static int coffeeNumber = 1;
+    private boolean waitingForPickup = false;
+    private static Object lock = new Object();
+    private int coffeeNumber = 1;
     
     
     @Override
     public void run() {
         // call makeCoffee method and pending it to 5000 ms
         makeCoffee();
-        while(coffeReady) {
+        while(this.waitingForPickup) {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
@@ -19,29 +19,29 @@ public class CoffeMachine implements Runnable {
             }
             System.out.println("Coffee " + coffeeNumber + " is ready");
             coffeeNumber++;
-            coffeReady = false;
+            this.waitingForPickup = false;
         }
         
     }
 
-    public static int getCoffeeNumber() {
-        return coffeeNumber;
+    public int getCoffeeNumber() {
+        return this.coffeeNumber;
     }
 
 
     public void makeCoffee() {
         synchronized (lock) {
-            if (coffeReady == true) {
+            if (this.waitingForPickup == true) {
                 try {
-                    CoffeMachine.lock.wait();
+                    lock.wait();
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             } else {
                 System.out.println("Coffee is ready");
-                coffeReady = true;
-                CoffeMachine.lock.notify();
+                this.waitingForPickup = true;
+                lock.notify();
             }
         }
     
