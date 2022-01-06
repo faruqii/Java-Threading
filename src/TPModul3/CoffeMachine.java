@@ -2,8 +2,8 @@ package TPModul3;
 
 public class CoffeMachine implements Runnable {
 
-    private boolean coffeReady = false;
-    private static Object lock = new Object();
+    boolean coffeReady = false;
+    static Object lock = new Object();
     private static int coffeeNumber = 1;
     
     
@@ -45,6 +45,9 @@ public class CoffeMachine implements Runnable {
             }
         }
     
+    }
+
+    public void setCoffeeNumber(int i) {
     }
 }
 
