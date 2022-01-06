@@ -16,13 +16,11 @@ public class Waiter implements Runnable {
 
     @Override
     public void run() {
-        // TODO Auto-generated method stub
         getCoffee(coffeMachine);
         // pending for 15000 ms
         try {
             Thread.sleep(15000);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
@@ -36,16 +34,16 @@ public class Waiter implements Runnable {
         // show Displays the coffee order delivered
         orderInfo();
         // change value of coffeeReady to false
-        coffeMachine.coffeReady = false;
+        coffeMachine.setWaitingForPickup(false); 
         // Check whether the value of the method
         // getCoffeeNumber belongs to CoffeeMachine class equal to
         // orderQty. If the same, then display order and exit information program
-        if (CoffeMachine.getCoffeeNumber() == orderQty) {
+        if (coffeMachine.getCoffeeNumber() == orderQty) {
             System.out.println("Coffee " + orderQty + " is ready");
             System.exit(0);
         }
         // call CoffeeMachine.lock.notifyAll() to inform can make next coffee
-        CoffeMachine.lock.notifyAll();
+        lock.notifyAll();
 
 
     

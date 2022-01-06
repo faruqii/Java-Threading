@@ -47,8 +47,14 @@ public class CoffeMachine implements Runnable {
     
     }
 
-    public void setCoffeeNumber(int i) {
+    public boolean isWaitingForPickup() {
+        return waitingForPickup;
     }
+
+    public void setWaitingForPickup(boolean waitingForPickup) {
+        this.waitingForPickup = waitingForPickup;
+    }
+    
 }
 
     
