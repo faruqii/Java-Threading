@@ -4,49 +4,47 @@ public class Waiter implements Runnable {
 
     private int orderQty;
     private int customerID;
-    private static int coffeePrice = 25000;
+    private int coffeePrice = 25000;
 
-    public Waiter(int orderQty, int customerID) {
-        this.orderQty = orderQty;
+    public Waiter(int customerID, int orderQty) {
         this.customerID = customerID;
+        this.orderQty = orderQty;
     }
 
 
     @Override
     public void run() {
-        getCoffee(CoffeMachine); // error
-        // pending for 15000 ms
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-       
+        // call getCoffee method and pending it to 5000 ms
+        getCoffee();
         
     }
 
     public void orderInfo() {
-        System.out.println("Customer " + customerID + " ordered " + orderQty + " coffees" + " for " + (orderQty * coffeePrice) + " Rupiah");
+        System.out.println("==========================================================");
+        System.out.println("Customer ID: " + this.customerID);
+        System.out.println("Numbeer of Coffee: " + this.orderQty);
+        System.out.println("Total Price: " + this.orderQty * coffeePrice);
+        System.out.println("==========================================================");
     }
 
-    public void getCoffee(CoffeMachine coffemachine) {
-        // show Displays the coffee order delivered
-        orderInfo();
-        // change value of coffeeReady to false
-        coffemachine.setWaitingForPickup(false); 
-        // Check whether the value of the method
-        // getCoffeeNumber belongs to CoffeeMachine class equal to
-        // orderQty. If the same, then display order and exit information program
-        if (coffemachine.getCoffeeNumber() == orderQty) {
-            System.out.println("Coffee " + orderQty + " is ready");
-            System.exit(0);
+    // create synchronized method getCoffee
+    public void getCoffee() {
+        synchronized(CoffeMachine.getLock()) {
+            // display order delivered coffee 
+            System.out.println("Waiter:  Coffee Delivered");
+            // if orderQty is greater than 1, then waiter inform machine to make another coffee
+            if (CoffeMachine.getCoffeeNumber() == orderQty) {
+                this.orderInfo();
+                System.exit(0);
+            } else {
+                System.out.println("Waiter:  Telling the machine to make another coffee");
+                CoffeMachine.getLock().notifyAll();
+            }
+            
         }
-        // call CoffeeMachine.lock.notifyAll() to inform can make next coffee
-        CoffeMachine.getLock().notifyAll();
-
-
-    
+        
     }
+    
 
 }
 
