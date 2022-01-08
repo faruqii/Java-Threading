@@ -2,9 +2,9 @@ package TPModul3;
 
 public class Waiter implements Runnable {
 
-    private int orderQty;
-    private int customerID;
-    private int coffeePrice = 25000;
+    private final int orderQty;
+    private final int customerID;
+    static int coffeePrice = 25000;
 
     public Waiter(int customerID, int orderQty) {
         this.customerID = customerID;
@@ -12,11 +12,18 @@ public class Waiter implements Runnable {
     }
 
 
+
     @Override
     public void run() {
         // call getCoffee method and pending it to 5000 ms
-        getCoffee();
-        
+        while (true) {
+            getCoffee();
+            try {
+                Thread.sleep(15000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void orderInfo() {
@@ -26,25 +33,24 @@ public class Waiter implements Runnable {
         System.out.println("Total Price: " + this.orderQty * coffeePrice);
         System.out.println("==========================================================");
     }
-
     // create synchronized method getCoffee
+
     public void getCoffee() {
-        synchronized(CoffeMachine.getLock()) {
-            // display order delivered coffee 
-            System.out.println("Waiter:  Coffee Delivered");
-            // if orderQty is greater than 1, then waiter inform machine to make another coffee
-            if (CoffeMachine.getCoffeeNumber() == orderQty) {
-                this.orderInfo();
+        synchronized(CoffeeMachine.getLock()) {
+
+            System.out.println("Waiter: Coffee is ready to deliver");
+            CoffeeMachine coffeeMachine = new CoffeeMachine();
+            coffeeMachine.setWaitingForPickup(false);
+
+            // check if value of getCoffeeNumber form CoffeeMachine class is equal to orderQty
+            // if same, call method orderInfo() to print order info and exit the program
+            if (CoffeeMachine.getCoffeeNumber() == this.orderQty + 1) {
+                orderInfo();
                 System.exit(0);
-            } else {
-                System.out.println("Waiter:  Telling the machine to make another coffee");
-                CoffeMachine.getLock().notifyAll();
             }
-            
+            CoffeeMachine.getLock().notifyAll();
+            System.out.println("Waiter: Tell the coffee machine to make another coffee\n");
+
         }
-        
     }
-    
-
 }
-
